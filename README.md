@@ -1,0 +1,2 @@
+# flask-login-network-segregation
+A demonstration of a Python Flask login application containerized with Docker and orchestrated with Docker Compose.  Key concepts:  Network segregation: public frontend network + private backend network (internal: true)  Healthchecks and service dependencies (condition: service_healthy)  Multi‑stage Dockerfile with a non‑root user  Persistent volume for PostgreSQL  Environment‑based configuration via .env  This project is intended for testing and educational purposes only.
