@@ -1,4 +1,3 @@
-```markdown
 # Flask Login Demo with Docker Compose – Network Isolation & Healthchecks
 
 A minimal, production‑oriented demonstration of a Python Flask login application, containerized with Docker and orchestrated with Docker Compose.  
@@ -56,12 +55,12 @@ A minimal, production‑oriented demonstration of a Python Flask login applicati
    ```
    Edit `.env` to your liking (at least set a strong `SECRET_KEY`).
 
-3. **Build and start the services**
+3. **Build and start the services**  
    ```bash
    docker-compose up -d --build
    ```
 
-4. **Initialize the database** (creates tables and test users)
+4. **Initialize the database** (creates tables and test users)  
    ```bash
    docker-compose exec web flask init-db
    ```
@@ -69,9 +68,9 @@ A minimal, production‑oriented demonstration of a Python Flask login applicati
 5. **Access the application**  
    Open your browser at [http://localhost:8080](http://localhost:8080)  
    Use the following test credentials:
-    - `admin` / `admin123` (role: admin)
-    - `joao` / `joao123` (role: user)
-    - `maria` / `maria123` (role: user)
+   - `admin` / `admin123` (role: admin)
+   - `joao` / `joao123` (role: user)
+   - `maria` / `maria123` (role: user)
 
 ## Project Structure
 
@@ -118,17 +117,17 @@ docker inspect <db_container_id> | grep -A 10 Health
 ```
 
 ### Test Network Isolation
-- Check backend isolation:
+- Check backend isolation:  
   ```bash
   docker exec -it <db_container_id> ping 8.8.8.8
   # Expected: Network unreachable
   ```
-- Check that the database is not exposed to the host:
+- Check that the database is not exposed to the host:  
   ```bash
   psql -h localhost -p 5432 -U felipe -d login_db
   # Expected: connection refused
   ```
-- Check connectivity from web to db:
+- Check connectivity from web to db:  
   ```bash
   docker exec -it <web_container_id> python -c "import socket; socket.gethostbyname('db')"
   ```
@@ -138,11 +137,11 @@ docker inspect <db_container_id> | grep -A 10 Health
 
 ## Cleaning Up
 
-- Stop and remove containers, networks, but keep volumes:
+- Stop and remove containers, networks, but keep volumes:  
   ```bash
   docker-compose down
   ```
-- Remove everything including volumes (data loss!):
+- Remove everything including volumes (data loss!):  
   ```bash
   docker-compose down -v
   ```
@@ -161,4 +160,3 @@ This project is licensed under the MIT License – see the [LICENSE](LICENSE) fi
 ## Disclaimer
 
 **This is a demonstration project intended for testing and learning purposes only.** It is not hardened for production use. Use at your own risk.
-```
