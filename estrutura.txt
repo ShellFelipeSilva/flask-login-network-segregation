@@ -1,0 +1,9 @@
+meu-app-login/
+├── app/
+│   ├── app.py
+│   ├── requirements.txt
+│   ├── Dockerfile
+│   └── templates/
+│       └── login.html
+├── docker-compose.yml
+└── .env
