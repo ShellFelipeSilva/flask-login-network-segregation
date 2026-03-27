@@ -1,4 +1,3 @@
-```markdown
 # Flask Login Demo with Advanced Docker Compose
 
 A production‑oriented demonstration of a Python Flask login application, containerized with Docker and orchestrated with Docker Compose.  
@@ -267,4 +266,3 @@ This project is licensed under the MIT License – see the [LICENSE](LICENSE) fi
 ## Disclaimer
 
 **This is a demonstration project intended for testing and learning purposes only.** It is not hardened for production use. Use at your own risk.
-```
