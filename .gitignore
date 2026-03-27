@@ -1,7 +1,6 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
 .Python
 env/
@@ -10,16 +9,15 @@ venv/
 *.egg-info/
 dist/
 build/
-*.egg
 
-# Flask
-instance/
-.webassets-cache
-.env.local
-.env.*.local
+# Environment files
+docker/.env
+.env.*
+!docker/.env.example
 
-# Environment variables
-.env
+# Docker secrets (excluir apenas os arquivos reais, manter .example)
+secrets/*.txt
+!secrets/*.txt.example
 
 # Docker
 docker-compose.override.yml
@@ -30,7 +28,6 @@ docker-compose.override.yml
 .idea/
 *.swp
 *.swo
-*~
 .DS_Store
 Thumbs.db
 

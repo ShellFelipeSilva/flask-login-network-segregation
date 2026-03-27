@@ -1,0 +1,85 @@
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true
+
+volumes:
+  postgres_data:
+    name: ${COMPOSE_PROJECT_NAME}_postgres_data
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  secret_key:
+    file: ./secrets/secret_key.txt
+
+services:
+  db:
+    image: postgres:15-alpine
+    secrets:
+      - db_password
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    restart: unless-stopped
+
+  web:
+    build: app
+    secrets:
+      - secret_key
+    environment:
+      FLASK_APP: app.py
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      SECRET_KEY_FILE: /run/secrets/secret_key
+      FLASK_ENV: ${FLASK_ENV:-production}
+    ports:
+      - "${WEB_PORT:-8080}:5000"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app:/app
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync
+          path: app
+          target: /app
+          ignore:
+            - __pycache__/
+            - .env
+            - .env.*
+        - action: rebuild
+          path: app/requirements.txt

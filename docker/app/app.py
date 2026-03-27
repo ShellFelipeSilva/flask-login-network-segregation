@@ -7,17 +7,27 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'dev-secret-key')
+
+# Read secret key from file if provided, else from env
+secret_key_file = os.getenv('SECRET_KEY_FILE')
+if secret_key_file and os.path.exists(secret_key_file):
+    with open(secret_key_file, 'r') as f:
+        app.secret_key = f.read().strip()
+else:
+    app.secret_key = os.getenv('SECRET_KEY', 'dev-secret-key')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='user')  # admin or user
+
 
 @app.route('/')
 def index():
@@ -26,6 +36,7 @@ def index():
         if user:
             return f'Bem-vindo, {session["username"]} (perfil: {user.role})! <a href="/logout">Logout</a>'
     return redirect(url_for('login'))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -39,16 +50,17 @@ def login():
         return 'Usuário ou senha inválidos', 401
     return render_template('login.html')
 
+
 @app.route('/logout')
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+
 @app.cli.command('init-db')
 def init_db():
-    """Cria as tabelas e popula com usuários de teste."""
+    """Create tables and populate with test users."""
     db.create_all()
-    # Usuários de teste
     users = [
         ('admin', generate_password_hash('admin123'), 'admin'),
         ('joao', generate_password_hash('joao123'), 'user'),
@@ -60,6 +72,7 @@ def init_db():
             db.session.add(user)
     db.session.commit()
     print("Banco inicializado com usuários: admin, joao, maria")
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -1,9 +1,21 @@
-meu-app-login/
+flask-login-network-segregation/
 ├── app/
 │   ├── app.py
-│   ├── requirements.txt
 │   ├── Dockerfile
+│   ├── requirements.txt
 │   └── templates/
 │       └── login.html
-├── docker-compose.yml
-└── .env
+├── docker/
+│   ├── docker-compose.yml
+│   ├── docker-compose.dev.yml
+│   ├── docker-compose.prod.yml
+│   ├── docker-compose.tools.yml
+│   ├── .env
+│   ├── .env.dev
+│   ├── .env.example
+│   ├── .env.prod
+│   └── secrets/
+│       ├── db_password.txt
+│       └── secret_key.txt
+├── .gitignore
+└── README.md
