@@ -57,14 +57,27 @@ def logout():
     return redirect(url_for('login'))
 
 
+# 🍀 Easter Egg: secret leprechaun route
+@app.route('/leprechaun')
+def leprechaun():
+    return "🍀 You found the pot of gold! 🪙 Enjoy a shamrock shake! 🍀"
+
+
+# 🍀 Easter Egg: custom 404 with leprechaun humour
+@app.errorhandler(404)
+def not_found(e):
+    return "<h1>🍀 Oops! The leprechaun hid this page. Try again! 🍀</h1>", 404
+
+
 @app.cli.command('init-db')
 def init_db():
     """Create tables and populate with test users."""
     db.create_all()
     users = [
         ('admin', generate_password_hash('admin123'), 'admin'),
-        ('joao', generate_password_hash('joao123'), 'user'),
-        ('maria', generate_password_hash('maria123'), 'user')
+        ('toni', generate_password_hash('toni123'), 'user'),
+        ('zell', generate_password_hash('zell123'), 'user'),
+        ('cachorro', generate_password_hash('cachorro123'), 'user')
     ]
     for username, pwd_hash, role in users:
         if not User.query.filter_by(username=username).first():
