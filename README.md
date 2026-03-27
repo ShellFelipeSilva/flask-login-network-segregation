@@ -57,7 +57,7 @@ A production‑oriented demonstration of a Python Flask login application, conta
 
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/your-username/flask-login-demo.git
+   git clone https://github.com/ShellFelipeSilva/flask-login-demo.git
    cd flask-login-demo
    ```
 
