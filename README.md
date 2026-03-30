@@ -57,8 +57,8 @@ A production‑oriented demonstration of a Python Flask login application, conta
 
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/ShellFelipeSilva/flask-login-demo.git
-   cd flask-login-demo
+   git clone https://github.com/ShellFelipeSilva/flask-login-network-segregation.git
+   cd flask-login-network-segregation
    ```
 
 2. **Set up environment variables**  
