@@ -15,7 +15,7 @@ RUN useradd -m -s /bin/bash appuser && chown -R appuser:appuser /app
 COPY --from=builder /root/.local /home/appuser/.local
 
 # Copia código da aplicação
-COPY . .
+COPY ../docker/app .
 
 # Ajusta permissões e PATH
 ENV PATH=/home/appuser/.local/bin:$PATH

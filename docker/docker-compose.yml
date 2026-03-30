@@ -8,6 +8,8 @@ networks:
 volumes:
   postgres_data:
     name: ${COMPOSE_PROJECT_NAME}_postgres_data
+  redis_data:
+    name: ${COMPOSE_PROJECT_NAME}_redis_data
 
 secrets:
   db_password:
@@ -45,11 +47,12 @@ services:
     restart: unless-stopped
 
   web:
-    build: app
+    build: ../app
     secrets:
       - secret_key
     environment:
       FLASK_APP: app.py
+      # IMPORTANT: Read password from file for the connection string
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       SECRET_KEY_FILE: /run/secrets/secret_key
       FLASK_ENV: ${FLASK_ENV:-production}
@@ -62,7 +65,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./app:/app
+      - ../app:/app
     deploy:
       resources:
         limits:
@@ -75,11 +78,59 @@ services:
     develop:
       watch:
         - action: sync
-          path: app
+          path: ../app
           target: /app
           ignore:
             - __pycache__/
             - .env
             - .env.*
         - action: rebuild
-          path: app/requirements.txt
+          path: ../app/requirements.txt
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["tools", "dev"]
+    networks:
+      - backend
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+    command: redis-server --appendonly yes
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    profiles: ["tools", "dev"]
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - db
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    profiles: ["tools", "dev"]
+    ports:
+      - "${MAILHOG_UI:-8025}:8025"
+      - "${MAILHOG_SMTP:-1025}:1025"
+    networks:
+      - backend
+      - frontend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 128M
